@@ -1,0 +1,492 @@
+[
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "admin"
+        }
+    },
+	{
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 1,
+            "menu_name": "Home",
+            "parent_menu_id": 0,
+            "url": "/home",
+            "page_number": 1,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 2,
+            "menu_name": "Query Builder",
+            "parent_menu_id": 0,
+            "url": "/",
+            "page_number": 0,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 3,
+            "menu_name": "Data Source",
+            "parent_menu_id": 2,
+            "url": "data_source",
+            "page_number": 2,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 4,
+            "menu_name": "Query Definition",
+            "parent_menu_id": 2,
+            "url": "rb_builder",
+            "page_number": 3,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 5,
+            "menu_name": "User Profile",
+            "parent_menu_id": 2,
+            "url": "user_profile",
+            "page_number": 4,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.navigation_menu_details",
+        "fields": {
+            "menu_id": 6,
+            "menu_name": "Menu Permission",
+            "parent_menu_id": 2,
+            "url": "group_access_form",
+            "page_number": 5,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "Y"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 1,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Organization Name",
+            "help_context": "An organization name is a non-personal name that refers to a structured body of one or more persons that exists to perform some common function.",
+            "context_order": 1,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 2,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Address 1",
+            "help_context": "Address Line 1 is generally for the civic number and street name (street address).",
+            "context_order": 2,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 3,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Address 2",
+            "help_context": "Address Line 2 is for the apartment, suite, unit number, or other address designation that is not part of the physical address.",
+            "context_order": 3,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 4,
+        "fields": {
+            "page_no_id": 6,
+            "label": "City",
+            "help_context": " Address Line 3 is typically for the city.",
+            "context_order": 4,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 5,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Country",
+            "help_context": " Address Line 4 is typically for the country.",
+            "context_order": 5,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 6,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Organization Levels",
+            "help_context": "An organizational levelis a layer in a hierarchical order that is representative of the structure of your firm.",
+            "context_order": 6,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 7,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Organization Indicators",
+            "help_context": "Measuring organizational performance. One of the most useful indicators of organizational effectiveness is how well an organization meets its goals.",
+            "context_order": 7,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 8,
+        "fields": {
+            "page_no_id": 6,
+            "label": "Start Limit",
+            "help_context": "Indicators start limit of the respective organization.",
+            "context_order": 8,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.helper",
+        "pk": 9,
+        "fields": {
+            "page_no_id": 6,
+            "label": "End Limit",
+            "help_context": "Indicators End limit of the respective organization.",
+            "context_order": 9,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 1,
+        "fields": {
+            "error_code": "null",
+            "error_msg": "'%1' is required.",
+            "error_category": "Error",
+            "error_from": "Server",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 2,
+        "fields": {
+            "error_code": "blank",
+            "error_msg": "'%1' cannot be left blank. Please enter '%1'.",
+            "error_category": "Error",
+            "error_from": "Server",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 3,
+        "fields": {
+            "error_code": "unique",
+            "error_msg": "'%1'  already exists.",
+            "error_category": "Error",
+            "error_from": "Server",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 4,
+        "fields": {
+            "error_code": "null",
+            "error_msg": "'%1' is required.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 5,
+        "fields": {
+            "error_code": "blank",
+            "error_msg": "'%1' cannot be left blank. Please enter '%1'.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 6,
+        "fields": {
+            "error_code": "unique",
+            "error_msg": "'%1'  already exists.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 7,
+        "fields": {
+            "error_code": "invalid from date",
+            "error_msg": "'%1' cannot be later than the '%2'.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 8,
+        "fields": {
+            "error_code": "invalid to date",
+            "error_msg": "'%2' cannot be earlier than the '%1'.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 9,
+        "fields": {
+            "error_code": "same date",
+            "error_msg": "'%1' and '%2' cannot be same.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 10,
+        "fields": {
+            "error_code": "exceed",
+            "error_msg": "%1 value exceed.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.warnings",
+        "pk": 11,
+        "fields": {
+            "error_code": "max weight",
+            "error_msg": "sum of %1 value should be equal to 100.",
+            "error_category": "Error",
+            "error_from": "Client",
+            "error_no": 404,
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 1,
+        "fields": {
+            "menu_id_id": 1,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 2,
+        "fields": {
+            "menu_id_id": 2,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 3,
+        "fields": {
+            "menu_id_id": 3,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 4,
+        "fields": {
+            "menu_id_id": 4,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 5,
+        "fields": {
+            "menu_id_id": 5,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    },
+    {
+        "model": "base.group_access_definition",
+        "pk": 6,
+        "fields": {
+            "menu_id_id": 6,
+            "group_id_id": 1,
+            "add": "Y",
+            "edit": "Y",
+            "view": "Y",
+            "delete": "Y",
+            "created_by": 1,
+            "created_date": "2023-01-09T11:00:57.616790",
+            "last_updated_by": 1,
+            "last_updated_date": "2023-01-09T11:00:57.616790",
+            "delete_flag": "N"
+        }
+    }
+]

@@ -314,6 +314,10 @@ class metrics_serilizer(serializers.ModelSerializer):
         model = metrics
         fields = ('id','QUERY_ID','QUERY_NAME','COLUMN_NAME','COLUMN_DATATYPE','TOTAL_COUNT','NOT_NULL_COUNT','NULL_COUNT','BLANK_COUNT','DISTINCT_VALUES_COUNT','MAX_LENGTH','MIN_LENGTH','MAX_VALUE','MIN_VALUE','NUMERIC_ONLY_VALUES_COUNT','ALPHABETS_ONLY_VALUES_COUNT','ALPHANUMERIC_ONLY_VALUES_COUNT','CONTAINS_SPECIAL_CHAR_COUNT','TOP_TEN_DISTINCT_VALUES','TOP_TEN_DISTRIBUTED_VALUES','OUTLIERS','DUPLICATE','REFERAL_INTEGRITY','RUN_DATE')
 
+class meta_metrics_serilizer(serializers.ModelSerializer):
+    class Meta:
+        model = meta_metrics
+        fields = ('__all__')
 
 # Restful Connect
 # class rb_rest_connect_table_Serializer(serializers.ModelSerializer):

@@ -566,3 +566,72 @@ class metrics(models.Model):
 
 
 
+class meta_metrics(models.Model):
+    
+    id = models.AutoField(primary_key=True),
+    TABLE_NAME = models.CharField(max_length=255, null=True, blank=False)
+    ANALYSIS_START = models.DateTimeField()
+    ANALYSIS_END = models.DateTimeField()
+
+    ROW_COUNT = models.IntegerField(null=False, blank=False)
+    COLUMN_COUNT = models.IntegerField(null=False, blank=False)
+    MEMORY_SIZE = models.FloatField(null=False, blank=False)
+    RECORD_SIZE = models.FloatField(null=False, blank=False)
+    MISSING_CELL_COUNT = models.IntegerField(null=False, blank=False)
+    MISSING_COL_COUNT = models.IntegerField(null=False, blank=False)
+    MISSING_PERCENT = models.FloatField(null=False, blank=False)
+    NUMERIC_COL_COUNT = models.IntegerField(null=True, blank=True)
+    DATETIME_COL_COUNT = models.IntegerField(null=True, blank=True)
+    CATEGORICAL_COL_COUNT = models.IntegerField(null=True, blank=True)
+    TEXT_COL_COUNT = models.IntegerField(null=True, blank=True)
+
+    # COMMON FIELDS
+    COLUMN_NAME = models.CharField(max_length=255, null=True, blank=True)
+    COLUMN_CATEGORY = models.CharField(max_length=255, null=True, blank=True)
+    DISTINCT_COUNT = models.IntegerField(null=True, blank=True)
+    DISTINCT_PERCENT = models.FloatField(null=True, blank=True)
+    MISSING_COUNT = models.IntegerField(null=True, blank=True)
+    MISSING_PERCENT = models.FloatField(null=True, blank=True)
+    UNIQUE_COUNT = models.IntegerField(null=True, blank=True)
+    UNIQUE_PERCENT = models.FloatField(null=True, blank=True)
+    MIN_TEN_VALUES = models.TextField()
+    MAX_TEN_VALUES = models.TextField()
+        
+    # FOR REAL NUMBER AND DATE
+    UNIQUE = models.BooleanField(default=True)
+    INFINITE_COUNT = models.IntegerField(null=True, blank=True)
+    INFINITE_PERCENT = models.FloatField(null=True, blank=True)
+    MIN_VALUE = models.CharField(max_length=255, null=True, blank=True)
+    MAX_VALUE = models.CharField(max_length=255, null=True, blank=True)
+    ZERO_COUNT = models.IntegerField(null=True, blank=True)
+    ZERO_PERCENT = models.FloatField(null=True, blank=True)
+    NEGATIVE_COUNT = models.IntegerField(null=True, blank=True)
+    NEGATIVE_PERCENT = models.FloatField(null=True, blank=True)
+    
+    MEAN = models.FloatField(null=True, blank=True)
+    MEDIAN = models.FloatField(null=True, blank=True)
+    VARIANCE = models.FloatField(null=True, blank=True)
+    RANGE = models.TextField()
+    INTERQUARTILE_RANGE = models.FloatField(null=True, blank=True)
+    SUM = models.IntegerField(null=True, blank=True)
+    STANDARD_DEVIATION = models.FloatField(null=True, blank=True)
+    COEFFICIENT_OF_VARIATION = models.FloatField(null=True, blank=True)
+    MEDIAN_ABSOLUTE_DEVIATION = models.FloatField(null=True, blank=True)
+    SKEWNESS = models.FloatField(null=True, blank=True)
+    KURTOSIS = models.FloatField(null=True, blank=True)
+    MONOTONICITY = models.CharField(max_length=255, null= True, blank=True)
+    
+    # FOR Categorical
+    MAX_LENGTH = models.FloatField(null=True, blank=True)
+    MIN_LENGTH = models.FloatField(null=True, blank=True)
+    MEAN_LENGTH = models.FloatField(null=True, blank=True)
+    MEDIAN_LENGTH = models.FloatField(null=True, blank=True)
+    TOTAL_CHARACTERS = models.IntegerField(null=True, blank=True)
+    DISTINCT_CHARACTERS = models.IntegerField(null=True, blank=True)
+    DISTINCT_CATEGORIES = models.IntegerField(null=True, blank=True)
+    DISTINCT_SCRIPTS = models.IntegerField(null=True, blank=True)
+    DISTINCT_BLOCKS = models.IntegerField(null=True, blank=True)
+    RUN_DATE = models.DateTimeField(auto_now=True)
+        
+    class Meta:
+        db_table ='meta_metrics'

@@ -194,7 +194,6 @@ urlpatterns = [
 
     path("get_ydata_profiling_report", views.get_ydata_profiling_report),
     path("get_data_quality_report", views.get_data_quality_report),
-
     path("get_json_report", views.get_json_report),
 
      # path("get_rb_connect_definition_table", views.get_rb_rest_connect_table),
@@ -207,17 +206,15 @@ urlpatterns = [
      
      path("ins_and_upd_connection_data", rb_views.ins_and_upd_connection_data),
      
-     
      path("transform_data",rb_views.fn_data_to_transform),
-     
      path('datainsertdestination',rb_views.fn_ins_data_to_source),
-     
-     path('datatocomapre',rb_views.dataprofileCompare),
-     
-     
+     path('datatocomapre',rb_views.dataprofileCompare),     
      path('dataquality',rb_views.fn_data_quality),
-     
      path('ins_profiler_data',rb_views.ins_data_quality_metrics),
+     path("get_metrics/<int:id>/", rb_views.get_metrics_data),
+
+     # Meta_Metrics
+     path('ins_data_quality_meta_metrics',rb_views.ins_data_quality_meta_metrics),
 
 
 ]

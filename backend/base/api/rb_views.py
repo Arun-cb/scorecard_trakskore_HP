@@ -1949,3 +1949,102 @@ def get_metrics_data(request, id=0):
     except Exception as exc:
         print(f"==>> exc: {exc}")
         return Response({"msg": exc}, status=status.HTTP_404_NOT_FOUND)
+    
+# API Insert for meta_metrics Table
+@api_view(['POST'])
+def ins_data_quality_meta_metrics(request):
+    profilerDataRequest = request.data
+
+    analysis = profilerDataRequest.get('analysis')
+    table_data = profilerDataRequest.get('table')
+    table_categorical_data = table_data.get('types')
+    column_analysis = profilerDataRequest.get('variables')
+
+    saved_data_list = []
+
+        
+    for columns in column_analysis:
+        
+        MIN_TEN_VALUES_LIST = list(column_analysis[columns].get('value_counts_index_sorted', {}).keys())[:10]
+        MIN_TEN_VALUES = ",".join(str(value) for value in MIN_TEN_VALUES_LIST)
+        
+        MAX_TEN_VALUES_LIST = list(column_analysis[columns].get('value_counts_index_sorted', {}).keys())[-10:]
+        MAX_TEN_VALUES = ",".join(map(str, MAX_TEN_VALUES_LIST))
+        
+        dictofProfilerData = {
+            # Table Level Common Fields
+            'TABLE_NAME' : analysis["title"],
+            'ANALYSIS_START' : analysis['date_start'],
+            'ANALYSIS_END' : analysis['date_end'],
+
+            'ROW_COUNT' : table_data['n'],
+            'COLUMN_COUNT' : table_data['n_var'],
+            'MEMORY_SIZE' : table_data['memory_size'],
+            'RECORD_SIZE' : table_data['record_size'],
+            'MISSING_CELL_COUNT' : table_data['n_cells_missing'],
+            'MISSING_COL_COUNT' : table_data['n_vars_with_missing'],
+            'MISSING_PERCENT' : table_data['p_cells_missing'],
+            'NUMERIC_COL_COUNT' : table_categorical_data.get('Numeric') if table_categorical_data.get('Numeric') else 0,
+            'DATETIME_COL_COUNT' : table_categorical_data.get('DateTime') if table_categorical_data.get('DateTime') else 0,
+            'CATEGORICAL_COL_COUNT' : table_categorical_data.get('Categorical') if table_categorical_data.get('Categorical') else 0,
+            'TEXT_COL_COUNT' : table_categorical_data.get('Text') if table_categorical_data.get('Text') else 0,
+
+            # COLUMN LEVEL COMMON FIELDS
+            'COLUMN_NAME' : columns,
+            'COLUMN_CATEGORY' : column_analysis[columns].get('type'),
+            'DISTINCT_COUNT' : column_analysis[columns].get('n_distinct'),
+            'DISTINCT_PERCENT' : column_analysis[columns].get('p_distinct'),
+            'MISSING_COUNT' : column_analysis[columns].get('n_missing'),
+            'MISSING_PERCENT' : column_analysis[columns].get('p_missing'),
+            'UNIQUE_COUNT' : column_analysis[columns].get('n_unique'),
+            'UNIQUE_PERCENT' : column_analysis[columns].get('p_unique'),
+            'MIN_TEN_VALUES' : MIN_TEN_VALUES,
+            'MAX_TEN_VALUES' : MAX_TEN_VALUES,
+            
+                
+            # FOR REAL NUMBER AND DATE
+            'UNIQUE' : column_analysis[columns].get('is_unique') if column_analysis[columns].get('is_unique') else 0,
+            'INFINITE_COUNT' : column_analysis[columns].get('n_infinite') if column_analysis[columns].get('n_infinite') else 0,
+            'INFINITE_PERCENT' : column_analysis[columns].get('p_infinite') if column_analysis[columns].get('p_infinite') else 0,
+            'MIN_VALUE' : column_analysis[columns].get('min') if column_analysis[columns].get('min') else 0,
+            'MAX_VALUE' : column_analysis[columns].get('max') if column_analysis[columns].get('max') else 0,
+            'ZERO_COUNT' : column_analysis[columns].get('n_zeros') if column_analysis[columns].get('n_zero') else 0,
+            'ZERO_PERCENT' : column_analysis[columns].get('p_zeros') if column_analysis[columns].get('p_zeros') else 0,
+            'NEGATIVE_COUNT' : column_analysis[columns].get('n_negative') if column_analysis[columns].get('n_negative') else 0,
+            'NEGATIVE_PERCENT' : column_analysis[columns].get('p_negative') if column_analysis[columns].get('p_negative') else 0,
+            
+            'MEAN' : column_analysis[columns].get('mean') if column_analysis[columns].get('mean') else 0,
+            'MEDIAN' : column_analysis[columns].get('median') if column_analysis[columns].get('median') else 0,
+            'VARIANCE' : column_analysis[columns].get('variance') if column_analysis[columns].get('variance') else 0,
+            'RANGE' : column_analysis[columns].get('range') if column_analysis[columns].get('range') else 0,
+            'INTERQUARTILE_RANGE' : column_analysis[columns].get('iqr') if column_analysis[columns].get('iqr') else 0,
+            'SUM' : column_analysis[columns].get('sum') if column_analysis[columns].get('sum') else 0,
+            'STANDARD_DEVIATION' : column_analysis[columns].get('std') if column_analysis[columns].get('std') else 0,
+            'COEFFICIENT_OF_VARIATION' : column_analysis[columns].get('cv') if column_analysis[columns].get('cv') else 0,
+            'MEDIAN_ABSOLUTE_DEVIATION' : column_analysis[columns].get('mad') if column_analysis[columns].get('mad') else 0,
+            'SKEWNESS' : column_analysis[columns].get('skewness') if column_analysis[columns].get('skewness') else 0,
+            'KURTOSIS' : column_analysis[columns].get('kurtosis') if column_analysis[columns].get('kurtosis') else 0,
+            'MONOTONICITY' : column_analysis[columns].get('monotonic') if column_analysis[columns].get('monotonic') else 0,
+            
+        #     # FOR Categorical
+            'MAX_LENGTH' : column_analysis[columns].get('max_length') if column_analysis[columns].get('max_length') else 0,
+            'MIN_LENGTH' : column_analysis[columns].get('min_length') if column_analysis[columns].get('min_length') else 0,
+            'MEAN_LENGTH' : column_analysis[columns].get('mean_length') if column_analysis[columns].get('mean_length') else 0,
+            'MEDIAN_LENGTH' : column_analysis[columns].get('median_length') if column_analysis[columns].get('median_length') else 0,
+            'TOTAL_CHARACTERS' : column_analysis[columns].get('n_characters') if column_analysis[columns].get('n_characters') else 0,
+            'DISTINCT_CHARACTERS' : column_analysis[columns].get('n_characters_distinct') if column_analysis[columns].get('n_characters_distinct') else 0,
+            'DISTINCT_CATEGORIES' : column_analysis[columns].get('n_category') if column_analysis[columns].get('n_category') else 0,
+            'DISTINCT_SCRIPTS' : column_analysis[columns].get('n_scripts') if column_analysis[columns].get('n_scripts') else 0,
+            'DISTINCT_BLOCKS' : column_analysis[columns].get('n_block_alias') if column_analysis[columns].get('n_block_alias') else 0,
+        }
+        
+        profilerserializers = meta_metrics_serilizer(data = dictofProfilerData)
+
+        if profilerserializers.is_valid():
+            saved_instance = profilerserializers.save()
+            saved_data_list.append(meta_metrics_serilizer(saved_instance).data)
+        else:
+            print(f"Validation errors for {columns}: {profilerserializers.errors}")
+            return Response(profilerserializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    return Response(saved_data_list,status=status.HTTP_200_OK)

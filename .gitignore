@@ -4,8 +4,8 @@ backend/env/
 backend/base/__pycache__/
 backend/backend/base/__pycache__/
 backend/backend/__pycache__/
-# backend/base/migrations/__pycache__/
-# backend/base/migrations/
+backend/base/migrations/__pycache__/
+backend/base/migrations/
 backend/base/api/__pycache__/
 frontend/node_modules/.cache/.eslintcache
 frontend/node_modules/.cache/.eslintcache

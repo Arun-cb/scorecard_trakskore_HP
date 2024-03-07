@@ -134,28 +134,29 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "query_builder",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "localhost",
-        "PORT": "3306"
-    }
-}
-
-# AWS server database
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.mysql",
 #         "NAME": "query_builder",
-#         "USER": "cittabase",
-#         "PASSWORD": "Citta@#@!",
-#         "HOST": "13.126.97.230",
+#         "USER": "root",
+#         "PASSWORD": "",
+#         "HOST": "localhost",
 #         "PORT": "3306"
 #     }
 # }
+
+# AWS server database
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "query_builder_hp",
+        "USER": "cittabase",
+        "PASSWORD": "Citta@#@!",
+        "HOST": "13.126.97.230",
+        "PORT": "3306"
+    }
+}
 
 
 

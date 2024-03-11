@@ -75,6 +75,7 @@ def set_db_sql_connection(request):
 
                 if snowflake.connector.connect(**connection_str):
                     connection = snowflake.connector.connect(**connection_str)
+                    print("connection", connection)
                     connection.close()
                     return Response('Connected', status=status.HTTP_200_OK)
                 else:
@@ -83,6 +84,7 @@ def set_db_sql_connection(request):
             except snowflake.connector.errors.DatabaseError as e:
                 # Handle Oracle errors
                 error_message = f"Oracle error: {str(e)}"
+                print("error_message", error_message)
                 return Response(error_message, status=status.HTTP_400_BAD_REQUEST)
             
         else:
@@ -169,11 +171,19 @@ def get_range_query_definition(request, start, end, created_user, sortcolumn, se
         query_def_csv_export = query_definition.objects.filter(
             delete_flag="N", created_user=created_user)
         serializer = qb_defnition_serializer(query_def, many=True)
+        # print(type(json.loads(json.dumps(serializer.data))), json.dumps(serializer.data))
+        temp_data = []
+        for data in json.loads(json.dumps(serializer.data)):
+            con_data = data['connection_id']
+            del data['connection_id']
+            data['connection_id'] = con_data['id']
+            data['connection_type'] = con_data['connection_type']
+            temp_data.append(data)
         serializer_csv_export = qb_defnition_serializer(
             query_def_csv_export, many=True)
         return Response(
             {
-                "data": serializer.data,
+                "data": temp_data,
                 "data_length": query_def_len,
                 "csv_data": serializer_csv_export.data,
             }
@@ -1788,59 +1798,61 @@ def dataprofileCompare(request):
     return HttpResponse(dataProfiler, content_type='text/html')
 
 
+
 @api_view(["POST"])
 def fn_data_quality(request):
     
     requestQualityData = request.data
-    columnHeaders = requestQualityData['columns']    
+    
+    columnHeaders = requestQualityData['columns']  
+      
     df = pd.DataFrame(requestQualityData['data'], columns=[column['label'] for column in columnHeaders])
+
+    
     response_data = []
+    
     for columnquality in columnHeaders:
         
-        print("label",columnquality['label'])
-
-
-        numeric_column = df[columnquality['label']]        
-
+        column_data = df[columnquality['label']]
         
-        if pd.api.types.is_numeric_dtype(numeric_column):
-            # Calculate IQR to identify outliers
-            quantiles = numeric_column.quantile([0.25, 0.5, 0.75])
+        total = len(column_data)
+        not_null_col = column_data.count()
+        null_count_column = column_data.isnull().sum()
+        blank_count = (column_data == '').sum()
+        distinct_val = column_data.nunique()
+        max_length = column_data.astype(str).apply(lambda x: len(x)).max()
+        min_length = column_data.astype(str).apply(lambda x: len(x)).min() 
+                
+        if pd.api.types.is_numeric_dtype(column_data):
+            column_data = pd.to_numeric(column_data, errors='coerce')
+            column_data = column_data.dropna()  # Drop non-numeric values
+            
+            quantiles = column_data.quantile([0.25, 0.5, 0.75])
             q1 = quantiles[0.25]
             q2 = quantiles[0.75]
-            iqr = q2-q1
+            iqr = q2 - q1
             
             lower_bound = q1 - 1.5 * iqr
             upper_bound = q2 + 1.5 * iqr
 
-            outliers_numeric = (numeric_column < lower_bound) | (numeric_column > upper_bound)
-            # outliers_binary = outliers_numeric.astype(int).tolist()
-            # outliers = len(outliers_binary) > 0 if len(outliers_binary) > 0 else 0
+            outliers_numeric = (column_data < lower_bound) | (column_data > upper_bound)
             outliers = int(outliers_numeric.any())
-            print(outliers)
-
+            
+            max_value = column_data.max()
+            min_value = column_data.min()
         else:
             outliers = 0
         
-        # df[columnquality['label']] = pd.to_numeric(df[columnquality['label']], errors='coerce')
+        numeric_count = column_data.apply(lambda x: isinstance(x, (int, float, np.number))).sum()
+        alphabet_only_values = column_data.astype(str).str.count(r'^[a-zA-Z]+$').sum()
+        alphanumeric_only_values = column_data.astype(str).str.isalnum().sum()
+        contains_special_char_count = total - column_data.astype(str).str.isalnum().sum()
         
-        # df[columnquality['label']] = df[columnquality['label']].apply(lambda x: x if -1e308 < x < 1e308 else np.nan)
-        total = len(df[columnquality['label']])
-        not_null_col = df[columnquality['label']].count()
-        null_count_column = df[columnquality['label']].isnull().sum()
-        blank_count = (df[columnquality['label']] == '').sum()
-        distinct_val = df[columnquality['label']].nunique()
-        max_length = df[columnquality['label']].apply(lambda x: len(str(x))).max()
-        min_length = df[columnquality['label']].apply(lambda x: len(str(x))).min() 
-        max_value = df[columnquality['label']].max()
-        min_value = df[columnquality['label']].min()
-        numeric_count = df[columnquality['label']].apply(lambda x: isinstance(x, (int, float, np.number))).sum()
-        alphabet_only_values = df[columnquality['label']].astype(str).str.count(r'^[a-zA-Z]+$').sum()
-        ten_distinct_values =  df[columnquality['label']].unique()[:10]
-        ten_distributed_values = df[columnquality['label']].value_counts().nlargest(10)
-        duplicate_values = len(df[columnquality['label']])-len(df[columnquality['label']].drop_duplicates())
-
-
+        top_ten_distinct_values = column_data.unique()[:10]
+        top_ten_distributed_values = column_data.value_counts().nlargest(10)
+        
+        duplicate_values = total - distinct_val
+        
         response_data.append({
             'QUERY_ID': requestQualityData['id'],
             'QUERY_NAME': requestQualityData['query_name'],
@@ -1857,15 +1869,16 @@ def fn_data_quality(request):
             'MIN_VALUE': min_value,
             'NUMERIC_ONLY_VALUES_COUNT': numeric_count,
             'ALPHABETS_ONLY_VALUES_COUNT': alphabet_only_values,
-            'ALPHANUMERIC_ONLY_VALUES_COUNT': 0,
-            'CONTAINS_SPECIAL_CHAR_COUNT': 0,
-            'TOP_TEN_DISTINCT_VALUES': ten_distinct_values,
-            'TOP_TEN_DISTRIBUTED_VALUES': ten_distributed_values,
-            'DUPLICATE':duplicate_values,
+            'ALPHANUMERIC_ONLY_VALUES_COUNT': alphanumeric_only_values,
+            'CONTAINS_SPECIAL_CHAR_COUNT': contains_special_char_count,
+            'TOP_TEN_DISTINCT_VALUES': top_ten_distinct_values,
+            'TOP_TEN_DISTRIBUTED_VALUES': top_ten_distributed_values,
+            'DUPLICATE': duplicate_values,
             'OUTLIERS': outliers
         })
-        
+                
     return Response(response_data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])

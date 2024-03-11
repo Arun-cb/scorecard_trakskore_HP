@@ -146,7 +146,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # }
 
 # AWS server database
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -235,7 +234,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://16.16.81.33",
     "http://16.16.81.33:80",
     "http://43.205.221.20",
-    "http://43.205.221.20:80",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

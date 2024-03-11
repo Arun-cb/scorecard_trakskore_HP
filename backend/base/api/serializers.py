@@ -235,7 +235,14 @@ class warnings_serializer(serializers.ModelSerializer):
                   'error_from', 'error_no', 'created_by', 'last_updated_by')
 
 
+class rb_connect_def_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = rb_connect_definition_table
+        fields = ('id', 'connection_type')
+
+
 class qb_defnition_serializer(serializers.ModelSerializer):
+    connection_id = rb_connect_def_serializer(read_only=True)
     class Meta:
         model = query_definition
         fields = '__all__'

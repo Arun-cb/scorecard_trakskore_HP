@@ -1807,41 +1807,48 @@ def fn_data_quality(request):
     columnHeaders = requestQualityData['columns']  
       
     df = pd.DataFrame(requestQualityData['data'], columns=[column['label'] for column in columnHeaders])
-
     
     response_data = []
     
     for columnquality in columnHeaders:
         
         column_data = df[columnquality['label']]
-        
+                
         total = len(column_data)
         not_null_col = column_data.count()
         null_count_column = column_data.isnull().sum()
         blank_count = (column_data == '').sum()
         distinct_val = column_data.nunique()
-        max_length = column_data.astype(str).apply(lambda x: len(x)).max()
-        min_length = column_data.astype(str).apply(lambda x: len(x)).min() 
-                
+        max_length = column_data.astype(str).apply(lambda x: len(str(x))).max()
+        min_length = column_data.astype(str).apply(lambda x: len(str(x))).min() 
+        
         if pd.api.types.is_numeric_dtype(column_data):
             column_data = pd.to_numeric(column_data, errors='coerce')
+            
             column_data = column_data.dropna()  # Drop non-numeric values
             
-            quantiles = column_data.quantile([0.25, 0.5, 0.75])
-            q1 = quantiles[0.25]
-            q2 = quantiles[0.75]
-            iqr = q2 - q1
-            
-            lower_bound = q1 - 1.5 * iqr
-            upper_bound = q2 + 1.5 * iqr
+            if pd.api.types.is_bool_dtype(column_data):  # Check if the column is boolean
+                outliers = 0
+            else:
+                quantiles = column_data.quantile([0.25, 0.5, 0.75])
+                q1 = quantiles[0.25]
+                q2 = quantiles[0.75]
+                iqr = q2 - q1
+                
+                lower_bound = q1 - 1.5 * iqr
+                upper_bound = q2 + 1.5 * iqr
 
-            outliers_numeric = (column_data < lower_bound) | (column_data > upper_bound)
-            outliers = int(outliers_numeric.any())
-            
+                outliers_numeric = (column_data < lower_bound) | (column_data > upper_bound)
+                outliers = int(np.logical_xor(outliers_numeric.any().astype(float), 0.0))
+
             max_value = column_data.max()
             min_value = column_data.min()
         else:
             outliers = 0
+            max_value = None
+            min_value = None
+        
+        
         
         numeric_count = column_data.apply(lambda x: isinstance(x, (int, float, np.number))).sum()
         alphabet_only_values = column_data.astype(str).str.count(r'^[a-zA-Z]+$').sum()
@@ -1880,58 +1887,67 @@ def fn_data_quality(request):
     return Response(response_data, status=status.HTTP_200_OK)
 
 
-
 @api_view(['POST'])
-def ins_data_quality_metrics(request):
-    profilerDataRequest = request.data
+def ins_data_quality_metrics(request, id=0):
     
+    profilerDataRequest = request.data    
     
     saved_data_list = []
-    
-    for profilerData in profilerDataRequest:
-        
-        top_ten_values = profilerData.get('TOP_TEN_DISTINCT_VALUES', []) 
-        top_ten_values_str = ",".join(str(value) for value in top_ten_values)
-        
-        top_ten_distributed_values = profilerData.get('TOP_TEN_DISTRIBUTED_VALUES', [])
-        top_ten_distributed_values_str = ",".join(map(str, top_ten_distributed_values))
-        
-        dictofProfilerData = {
-            'QUERY_ID':profilerData['QUERY_ID'],
-            'QUERY_NAME':profilerData['QUERY_NAME'],
-            'COLUMN_NAME':profilerData['COLUMN_NAME'],
-            'COLUMN_DATATYPE':profilerData['COLUMN_DATATYPE'],
-            'TOTAL_COUNT':profilerData['TOTAL_COUNT'],
-            'NOT_NULL_COUNT':profilerData['NOT_NULL_COUNT'],
-            'NULL_COUNT':profilerData['NULL_COUNT'],
-            'BLANK_COUNT':profilerData['BLANK_COUNT'],
-            'DISTINCT_VALUES_COUNT':profilerData['DISTINCT_VALUES_COUNT'],
-            'MAX_LENGTH':profilerData['MAX_LENGTH'],
-            'MIN_LENGTH':profilerData['MIN_LENGTH'],
-            'MAX_VALUE':profilerData['MAX_VALUE'],
-            'MIN_VALUE':profilerData['MIN_VALUE'],
-            'NUMERIC_ONLY_VALUES_COUNT':profilerData['NUMERIC_ONLY_VALUES_COUNT'],
-            'ALPHABETS_ONLY_VALUES_COUNT':profilerData['ALPHABETS_ONLY_VALUES_COUNT'],
-            'ALPHANUMERIC_ONLY_VALUES_COUNT':profilerData['ALPHANUMERIC_ONLY_VALUES_COUNT'],
-            'CONTAINS_SPECIAL_CHAR_COUNT':profilerData['CONTAINS_SPECIAL_CHAR_COUNT'],
-            'TOP_TEN_DISTINCT_VALUES':top_ten_values_str,
-            'TOP_TEN_DISTRIBUTED_VALUES':top_ten_distributed_values_str,
-            'DUPLICATE':profilerData['DUPLICATE'],
-            'OUTLIERS':profilerData['OUTLIERS']
-        }
-        
-        
-        
-        profilerserializers = metrics_serilizer(data = dictofProfilerData)
-        
-        
-        if profilerserializers.is_valid():
-            saved_instance = profilerserializers.save()
-            saved_data_list.append(metrics_serilizer(saved_instance).data)
-        else:
-            print(profilerserializers.errors)
 
-    return Response(saved_data_list,status=status.HTTP_200_OK)
+    try:
+        latest_filtered_row = metrics.objects.filter(QUERY_ID=id).order_by('RUN_DATE').last()
+        if latest_filtered_row == None:
+            RunVersion = "V1"
+        else:
+            PrvRunVer = latest_filtered_row.RUN_VERSION
+            PrvRunVerNum = int(PrvRunVer[1:])
+            RunVersion = 'V' + str(PrvRunVerNum + 1)
+
+        
+        for profilerData in profilerDataRequest:
+            
+            top_ten_values = profilerData.get('TOP_TEN_DISTINCT_VALUES', []) 
+            top_ten_values_str = ",".join(str(value) for value in top_ten_values)
+            
+            top_ten_distributed_values = profilerData.get('TOP_TEN_DISTRIBUTED_VALUES', [])
+            top_ten_distributed_values_str = ",".join(map(str, top_ten_distributed_values))
+            
+            dictofProfilerData = {
+                'QUERY_ID':profilerData['QUERY_ID'],
+                'QUERY_NAME':profilerData['QUERY_NAME'],
+                'COLUMN_NAME':profilerData['COLUMN_NAME'],
+                'COLUMN_DATATYPE':profilerData['COLUMN_DATATYPE'],
+                'TOTAL_COUNT':profilerData['TOTAL_COUNT'],
+                'NOT_NULL_COUNT':profilerData['NOT_NULL_COUNT'],
+                'NULL_COUNT':profilerData['NULL_COUNT'],
+                'BLANK_COUNT':profilerData['BLANK_COUNT'],
+                'DISTINCT_VALUES_COUNT':profilerData['DISTINCT_VALUES_COUNT'],
+                'MAX_LENGTH':profilerData['MAX_LENGTH'],
+                'MIN_LENGTH':profilerData['MIN_LENGTH'],
+                'MAX_VALUE':profilerData['MAX_VALUE'],
+                'MIN_VALUE':profilerData['MIN_VALUE'],
+                'NUMERIC_ONLY_VALUES_COUNT':profilerData['NUMERIC_ONLY_VALUES_COUNT'],
+                'ALPHABETS_ONLY_VALUES_COUNT':profilerData['ALPHABETS_ONLY_VALUES_COUNT'],
+                'ALPHANUMERIC_ONLY_VALUES_COUNT':profilerData['ALPHANUMERIC_ONLY_VALUES_COUNT'],
+                'CONTAINS_SPECIAL_CHAR_COUNT':profilerData['CONTAINS_SPECIAL_CHAR_COUNT'],
+                'TOP_TEN_DISTINCT_VALUES':top_ten_values_str,
+                'TOP_TEN_DISTRIBUTED_VALUES':top_ten_distributed_values_str,
+                'DUPLICATE':profilerData['DUPLICATE'],
+                'OUTLIERS':profilerData['OUTLIERS'],
+                'RUN_VERSION': RunVersion
+            }
+            profilerserializers = metrics_serilizer(data = dictofProfilerData)
+            
+            
+            if profilerserializers.is_valid():
+                saved_instance = profilerserializers.save()
+                saved_data_list.append(metrics_serilizer(saved_instance).data)
+            else:
+                print(profilerserializers.errors)
+        return Response(saved_data_list,status=status.HTTP_200_OK)
+
+    except Exception as Err:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     
 
@@ -1939,29 +1955,68 @@ def ins_data_quality_metrics(request):
 def get_metrics_data(request, id=0):
     try:
         if id == 0:
+            print(1)
             return Response({"msg": "No Data Present"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            MetricsData = metrics.objects.filter(
-                QUERY_ID=id)
+            # MetricsData = metrics.objects.filter(
+            #     QUERY_ID=id)
+            print(2)
             
-            metricsSerilizer = metrics_serilizer(
-                MetricsData, many=True)
-            
-            if (len(metricsSerilizer.data) > 0):
-                framedata = pd.DataFrame(metricsSerilizer.data)
-                framedata['RUN_DATE'] = pd.to_datetime(framedata['RUN_DATE'])
-                recent_dates_table = framedata["RUN_DATE"].value_counts().head(5).index.tolist()
-                datetime_values_table = [pd.to_datetime(ts).strftime('%Y-%m-%d %H:%M') for ts in recent_dates_table]
-                framedata['RUN_DATE_truncated'] = framedata['RUN_DATE'].dt.strftime('%Y-%m-%d %H:%M')
-                Changedframedata = framedata[framedata['RUN_DATE_truncated'].isin(datetime_values_table)]
+            latest_filtered_row = metrics.objects.filter(QUERY_ID=id).order_by('RUN_DATE').last()
+            versionList = []
+            if latest_filtered_row != None:
+                versionList.append(latest_filtered_row.RUN_VERSION)
+                itr = int(latest_filtered_row.RUN_VERSION[1:]) - 1
+                counter = 0
+                while itr  > 0:
+                    appendItm = "V"+ str(itr)
+                    versionList.append(appendItm)
+                    itr -= 1
+                    counter += 1 
+                    if counter == 4:
+                        break  
 
-                return Response(Changedframedata.to_dict(orient="records"), status=status.HTTP_200_OK)
+                last_Records = metrics.objects.filter(RUN_VERSION = latest_filtered_row.RUN_VERSION, QUERY_ID=id)
+                last_5_records = metrics.objects.filter(RUN_VERSION__in=versionList, QUERY_ID=id)
+                
+                Last5Serilizer = metrics_serilizer(
+                    last_5_records, many=True)
+                
+                LastSerilizer = metrics_serilizer(
+                    last_Records, many=True)
+            
+            # print(f"==>> metricsSerilizer.data: {metricsSerilizer.data}")
+            
+            # if (len(metricsSerilizer.data) > 0):
+            #     framedata = pd.DataFrame(metricsSerilizer.data)
+
+                # framedata['RUN_DATE'] = pd.to_datetime(framedata['RUN_DATE'])
+                # recent_dates_table = framedata["RUN_DATE"].value_counts().head(5).index.tolist()
+                # datetime_values_table = [pd.to_datetime(ts).strftime('%Y-%m-%d %H:%M') for ts in recent_dates_table]
+                # framedata['RUN_DATE_truncated'] = framedata['RUN_DATE'].dt.strftime('%Y-%m-%d %H:%M')
+                # Changedframedata = framedata[framedata['RUN_DATE_truncated'].isin(datetime_values_table)]
+
+                # return Response(Changedframedata.to_dict(orient="records"), status=status.HTTP_200_OK)
+
+
+                if (len(Last5Serilizer.data) > 0 and len(last_Records) > 0):
+                    print(3)
+
+                    return Response({'last5': Last5Serilizer.data, 'Recent': LastSerilizer.data }, status=status.HTTP_200_OK)
+                else:
+                    print(444)
+
+                    return Response({"msg": "No Data Present"}, status=status.HTTP_404_NOT_FOUND)
             else:
+                print(4)
+
                 return Response({"msg": "No Data Present"}, status=status.HTTP_404_NOT_FOUND)
             
     except Exception as exc:
         print(f"==>> exc: {exc}")
-        return Response({"msg": exc}, status=status.HTTP_404_NOT_FOUND)
+        return Response(data={
+                "message": "The Invite Key could not be created.",
+                "error":exc }, status=status.HTTP_404_NOT_FOUND)
     
 # API Insert for meta_metrics Table
 @api_view(['POST'])

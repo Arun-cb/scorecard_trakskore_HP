@@ -210,7 +210,7 @@ urlpatterns = [
      path('datainsertdestination',rb_views.fn_ins_data_to_source),
      path('datatocomapre',rb_views.dataprofileCompare),     
      path('dataquality',rb_views.fn_data_quality),
-     path('ins_profiler_data',rb_views.ins_data_quality_metrics),
+     path('ins_profiler_data/<int:id>/',rb_views.ins_data_quality_metrics),
      path("get_metrics/<int:id>/", rb_views.get_metrics_data),
 
      # Meta_Metrics

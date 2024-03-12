@@ -534,6 +534,7 @@ class metrics(models.Model):
     DUPLICATE = models.CharField(max_length=255, null=True, blank=False)
     REFERAL_INTEGRITY = models.CharField(max_length=255, null=True, blank=False)
     RUN_DATE = models.DateTimeField(auto_now=True)
+    RUN_VERSION = models.CharField(max_length=255, null=True, blank=False)
     
     class Meta:
         db_table ='metrics'

@@ -149,10 +149,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "query_builder_hp",
-        "USER": "cittabase",
+        "NAME": "query_builder",
+        "USER": "root",
         "PASSWORD": "Citta@#@!",
-        "HOST": "13.126.97.230",
+        "HOST": "13.127.215.127",
         "PORT": "3306"
     }
 }
@@ -233,7 +233,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
     "http://16.16.81.33",
     "http://16.16.81.33:80",
-    "http://43.205.221.20",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True

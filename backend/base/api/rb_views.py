@@ -512,7 +512,6 @@ def rb_sql_show_columns(request):
             database=saved_connection.get("database_name"),
         )
         allResults = []
-        print("MYSQL", mydb)
         for table_info in reqTableColumnData:
             tableName = table_info['table_name']
             tableId = table_info['table_id']
@@ -585,7 +584,7 @@ def rb_sql_show_columns(request):
             
             dbCursor.execute(f"SHOW COLUMNS in TABLE {tableName}")
             
-            results = [{"id": idx, "columnName": row[2], "dataType": json.loads(row[3])['type'], "tableId": tableId} 
+            results = [{"columnName": row[2], "dataType": json.loads(row[3])['type'], "tableId": tableId} 
             for idx, row in enumerate(dbCursor.fetchall())]
             
             tableResults = {tableName: results}
@@ -1187,6 +1186,7 @@ def fn_ins_upd_column_selection(data,table_name,table_id,def_query_id,created_by
                         "created_by":created_by,
                         "last_updated_by": last_updated_by
                     }
+                    print("-----postColumnData----", postColumnData)
                     if 'id' in column_data["column"]:
                         columnTable = query_builder_table_columns.objects.get(id = column_data["column"]["id"])
                         queryColumnserilizer = qb_table_columns_serializers(instance = columnTable,data =postColumnData )
@@ -1590,7 +1590,7 @@ def ins_and_upd_connection_data(request):
                 print(queryDefnitionSerilazier.errors)
                 return Response("Query definition page not saved...", status=status.HTTP_400_BAD_REQUEST)
         else:
-            queryDefnitionSerilazier = qb_defnition_serializer(data=query_definition_data)
+            queryDefnitionSerilazier = query_defnition_serializer(data=query_definition_data)
             if queryDefnitionSerilazier.is_valid():
                 queryDefnitionSerilazier.save()
                 # allResponseData['Page1'] = queryDefnitionSerilazier.data

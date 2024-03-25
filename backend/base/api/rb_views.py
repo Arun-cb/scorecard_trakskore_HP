@@ -100,7 +100,6 @@ def set_db_sql_connection(request):
 def fnStoreQueryNameConnectionData(request):
 
     connnectionrequestdata = request.data
-    print("connnectionrequestdata", connnectionrequestdata)
     postConnData = {
         "query_name": connnectionrequestdata.get("query_name"),
         "connection_id": connnectionrequestdata["savedConnectionItems"].get("id"),
@@ -117,9 +116,8 @@ def fnStoreQueryNameConnectionData(request):
         "created_by": connnectionrequestdata.get("created_by"),
         "last_updated_by": connnectionrequestdata.get("last_updated_by")
     }
-    print("postConnData", postConnData)
 
-    queryDefnitionSerilazier = qb_defnition_serializer(data=postConnData)
+    queryDefnitionSerilazier = query_defnition_serializer(data=postConnData)
 
     if queryDefnitionSerilazier.is_valid():
         queryDefnitionSerilazier.save()

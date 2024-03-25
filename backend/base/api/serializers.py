@@ -247,6 +247,11 @@ class qb_defnition_serializer(serializers.ModelSerializer):
         model = query_definition
         fields = '__all__'
 
+class query_defnition_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = query_definition
+        fields = '__all__'
+
 
 class shared_query_definition_serializer(serializers.ModelSerializer):
     class Meta:
